@@ -1,0 +1,51 @@
+aws_region   = "us-east-1"
+aws_profile  = ""
+project_name = "togglemaster"
+environment  = "lab"
+
+# Defina uma senha forte antes de aplicar
+# Recomendado: 16+ caracteres, com letras, numeros e simbolos.
+db_password = "ChangeMe123!"
+
+# Segredos de aplicacao (opcional, recomendado definir em pipeline segura)
+service_api_key       = ""
+master_key            = ""
+aws_access_key_id     = ""
+aws_secret_access_key = ""
+
+# Custos: manter NAT ligado para private subnets. Se quiser economizar
+# mais e expor tudo em subnet publica (nao recomendado), ajuste para false
+# e revise os recursos que exigem private networking.
+use_nat_gateway = true
+
+# EKS node group
+eks_cluster_version = "1.30"
+node_instance_type  = "t3.medium"
+node_desired_size   = 2
+node_min_size       = 2
+node_max_size       = 2
+lab_role_arn        = ""
+
+# KEDA IRSA trust binding
+keda_namespace            = "keda"
+keda_service_account_name = "keda-operator"
+
+# NGINX Gateway Fabric IRSA trust binding
+nginx_namespace            = "nginx-gateway"
+nginx_service_account_name = "nginx-gateway"
+
+# metrics-server IRSA trust binding
+metrics_namespace            = "kube-system"
+metrics_service_account_name = "metrics-server"
+
+# analytics-service IRSA trust binding
+analytics_namespace            = "analytics"
+analytics_service_account_name = "analytics-service-sa"
+
+# evaluation-service IRSA trust binding
+evaluation_namespace            = "evaluation"
+evaluation_service_account_name = "evaluation-service-sa"
+
+# External Secrets Operator IRSA trust binding
+eso_namespace            = "external-secrets"
+eso_service_account_name = "external-secrets"
