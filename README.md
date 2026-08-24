@@ -30,7 +30,9 @@ Pipeline por ambiente:
 Secrets e variables esperados no GitHub:
 - Environment variables: `AWS_REGION`, `AWS_ROLE_TO_ASSUME`, `TF_BACKEND_BUCKET`, `TF_BACKEND_REGION`, `TF_BACKEND_ROLE_ARN` no Environment `dev`.
 - Environment variables opcionais: `TOGGLEMASTER_GITOPS_REPO_URL`, `TOGGLEMASTER_GITOPS_BRANCH`, `TOGGLEMASTER_ADDONS_REPO_URL`, `TOGGLEMASTER_ADDONS_BRANCH`.
-- Environment secrets: `TF_VAR_DB_PASSWORD`, `TF_VAR_SERVICE_API_KEY`, `TF_VAR_MASTER_KEY`.
+- `DB_PASSWORD` continua sendo o unico secret do bootstrap do Terraform, exportado no pipeline como `TF_VAR_db_password` quando a base de dados ainda precisa ser criada.
+- `SERVICE_API_KEY` e `MASTER_KEY` nao sao obrigatorios para o Terraform; eles sao gerados pelo pipeline `togglemaster-secrets-generator` e publicados no AWS Secrets Manager com os nomes `togglemaster-dev/app/service-api-key` e `togglemaster-dev/app/master-key`.
+- O repositório GitOps sincroniza esses valores para os workloads via `ExternalSecret` e os expõe nas variaveis dos containers (`SERVICE_API_KEY` e `MASTER_KEY`).
 - Nao configure `TF_VAR_AWS_ACCESS_KEY_ID` ou `TF_VAR_AWS_SECRET_ACCESS_KEY`: o fluxo usa
 	OIDC/IRSA e essas credenciais legadas nao sao consumidas.
 
@@ -71,7 +73,7 @@ Configure `dev`, `qa` e `prod` separadamente. Em cada environment, defina:
 	`TF_BACKEND_REGION` e opcionalmente `TF_BACKEND_ROLE_ARN`.
 - Variables opcionais: URLs e branches de `togglemaster-gitops` e
 	`togglemaster-addons`.
-- Secrets: `TF_VAR_DB_PASSWORD`, `TF_VAR_SERVICE_API_KEY` e `TF_VAR_MASTER_KEY`.
+- Secrets gerados pelo pipeline `togglemaster-secrets-generator`: `DB_PASSWORD`, `SERVICE_API_KEY` e `MASTER_KEY` no Secrets Manager, com sincronização pelo `ExternalSecret` do repositório GitOps.
 
 Remova secrets antigos `TF_VAR_AWS_ACCESS_KEY_ID` e `TF_VAR_AWS_SECRET_ACCESS_KEY`; eles não
 são mais consumidos pelo Terraform. Em `prod`, configure reviewers obrigatórios e impeça

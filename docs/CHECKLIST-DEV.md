@@ -17,9 +17,8 @@
 - [ ] `TOGGLEMASTER_ADDONS_BRANCH` definido (opcional).
 
 ## 3. Secrets do Environment `dev`
-- [ ] `TF_VAR_DB_PASSWORD` definido.
-- [ ] `TF_VAR_SERVICE_API_KEY` definido.
-- [ ] `TF_VAR_MASTER_KEY` definido.
+- [ ] `TF_VAR_DB_PASSWORD` definido para o bootstrap inicial do banco, quando necessário.
+- [ ] `SERVICE_API_KEY` e `MASTER_KEY` gerados via `togglemaster-secrets-generator` e existentes no AWS Secrets Manager com os nomes esperados.
 - [ ] Secrets legados `TF_VAR_AWS_ACCESS_KEY_ID` e `TF_VAR_AWS_SECRET_ACCESS_KEY` removidos;
 	o fluxo atual usa OIDC/IRSA.
 

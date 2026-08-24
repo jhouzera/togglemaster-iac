@@ -9,7 +9,8 @@
 ## 2. Configuração do GitHub
 - Criar o Environment `dev` no repositório `togglemaster-iac`.
 - Definir no Environment `dev` as variables `AWS_REGION`, `AWS_ROLE_TO_ASSUME`, `TF_BACKEND_BUCKET`, `TF_BACKEND_REGION` e `TF_BACKEND_ROLE_ARN`.
-- Definir no Environment `dev` os secrets `TF_VAR_DB_PASSWORD`, `TF_VAR_SERVICE_API_KEY` e `TF_VAR_MASTER_KEY`.
+- Definir no Environment `dev` o secret `TF_VAR_DB_PASSWORD` para o bootstrap inicial do banco, quando necessário.
+- Os segredos `SERVICE_API_KEY` e `MASTER_KEY` devem ser gerados pelo workflow `togglemaster-secrets-generator` e publicados no AWS Secrets Manager com os nomes `togglemaster-dev/app/service-api-key` e `togglemaster-dev/app/master-key`.
 - Remover secrets legados `TF_VAR_AWS_ACCESS_KEY_ID` e `TF_VAR_AWS_SECRET_ACCESS_KEY`; eles
 	nao fazem parte do contrato atual.
 - Definir opcionalmente no Environment `dev` as variables `TOGGLEMASTER_GITOPS_REPO_URL`, `TOGGLEMASTER_GITOPS_BRANCH`, `TOGGLEMASTER_ADDONS_REPO_URL` e `TOGGLEMASTER_ADDONS_BRANCH`.
