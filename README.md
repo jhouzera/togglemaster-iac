@@ -82,4 +82,3 @@ deploy a partir de branches que não sejam a branch protegida do ambiente.
 O trust policy das roles deve casar com o claim OIDC do workflow e com o `environment:` do
 job. Alterar o nome do environment ou o repositório exige atualizar também o stack
 `togglemaster-bootstrap-ci-iam`.
-
