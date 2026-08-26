@@ -17,7 +17,6 @@ bucket       = "${TF_BACKEND_BUCKET}"
 key          = "togglemaster/${ENV_NAME}/terraform.tfstate"
 region       = "${TF_BACKEND_REGION}"
 encrypt      = true
-use_lockfile = true
 EOF
 
 if [[ -n "${TF_BACKEND_ROLE_ARN:-}" ]]; then

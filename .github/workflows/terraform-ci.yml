@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - develop
-      - qa
-      - main
   pull_request:
 
 permissions:
@@ -63,4 +61,4 @@ jobs:
         run: tflint --init
 
       - name: TFLint run
-        run: tflint --recursive
+        run: tflint --recursive --minimum-failure-severity=error

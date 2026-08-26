@@ -5,8 +5,6 @@ set -euo pipefail
 
 required_vars=(
   TF_VAR_db_password
-  TF_VAR_service_api_key
-  TF_VAR_master_key
 )
 
 for var_name in "${required_vars[@]}"; do
@@ -18,6 +16,8 @@ for var_name in "${required_vars[@]}"; do
 done
 
 optional_vars=(
+  TF_VAR_service_api_key
+  TF_VAR_master_key
   TF_VAR_togglemaster_gitops_repo_url
   TF_VAR_togglemaster_gitops_branch
   TF_VAR_togglemaster_addons_repo_url
