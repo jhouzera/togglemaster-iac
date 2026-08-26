@@ -15,7 +15,7 @@ concurrency:
 
 jobs:
   plan:
-    name: Terraform Plan (lab)
+    name: Terraform Plan (dev)
     runs-on: ubuntu-latest
     environment: dev
     env:
@@ -70,7 +70,7 @@ jobs:
       - name: Publicar artefatos do plan
         uses: actions/upload-artifact@v4
         with:
-          name: terraform-plan-lab
+          name: terraform-plan-dev
           path: |
             tfplan
             tfplan.txt
@@ -80,5 +80,5 @@ jobs:
         if: github.event_name == 'pull_request'
         uses: marocchino/sticky-pull-request-comment@v2
         with:
-          header: terraform-plan-lab
+          header: terraform-plan-dev
           path: tfplan.txt

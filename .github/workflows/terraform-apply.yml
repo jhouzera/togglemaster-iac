@@ -8,12 +8,12 @@ permissions:
   id-token: write
 
 concurrency:
-  group: terraform-apply-lab
+  group: terraform-apply-dev
   cancel-in-progress: false
 
 jobs:
   apply:
-    name: Terraform Apply (lab)
+    name: Terraform Apply (dev)
     runs-on: ubuntu-latest
     environment: dev
     env:
