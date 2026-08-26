@@ -20,7 +20,7 @@ resource "aws_security_group" "rds" {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = ["10.0.0.0/8"]
   }
 }
 
@@ -44,6 +44,7 @@ resource "aws_db_instance" "auth" {
   vpc_security_group_ids  = [aws_security_group.rds.id]
   multi_az                = false
   publicly_accessible     = false
+  storage_encrypted       = true
   skip_final_snapshot     = true
   deletion_protection     = false
   backup_retention_period = 0
@@ -64,6 +65,7 @@ resource "aws_db_instance" "flag" {
   vpc_security_group_ids  = [aws_security_group.rds.id]
   multi_az                = false
   publicly_accessible     = false
+  storage_encrypted       = true
   skip_final_snapshot     = true
   deletion_protection     = false
   backup_retention_period = 0
@@ -84,6 +86,7 @@ resource "aws_db_instance" "targeting" {
   vpc_security_group_ids  = [aws_security_group.rds.id]
   multi_az                = false
   publicly_accessible     = false
+  storage_encrypted       = true
   skip_final_snapshot     = true
   deletion_protection     = false
   backup_retention_period = 0
@@ -105,7 +108,7 @@ resource "aws_security_group" "redis" {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = ["10.0.0.0/8"]
   }
 }
 
@@ -125,8 +128,8 @@ resource "aws_elasticache_replication_group" "redis" {
   num_cache_clusters         = 1
   automatic_failover_enabled = false
   multi_az_enabled           = false
-  at_rest_encryption_enabled = false
-  transit_encryption_enabled = false
+  at_rest_encryption_enabled = true
+  transit_encryption_enabled = true
   subnet_group_name          = aws_elasticache_subnet_group.this.name
   security_group_ids         = [aws_security_group.redis.id]
 }
@@ -147,6 +150,7 @@ resource "aws_sqs_queue" "events" {
   fifo_queue                 = false
   message_retention_seconds  = 345600
   visibility_timeout_seconds = 30
+  sqs_managed_sse_enabled    = true
 }
 
 resource "aws_secretsmanager_secret" "app" {
@@ -171,4 +175,3 @@ resource "aws_secretsmanager_secret_version" "app" {
     master_key             = var.master_key
   })
 }
-

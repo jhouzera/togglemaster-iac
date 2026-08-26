@@ -16,6 +16,10 @@ crash.*.log
 *.tfvars
 *.tfvars.json
 
+# Allow tfvars in environments directory as they don't contain sensitive data
+!environments/*.tfvars
+
+
 # Ignore override files as they are usually used to override resources locally and so
 # are not checked in
 override.tf

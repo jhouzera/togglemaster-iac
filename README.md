@@ -25,12 +25,14 @@ Fluxo operacional:
 Pipeline por ambiente:
 - `terraform-plan.yml`: executa `fmt`, `init`, `validate` e `plan` para o ambiente `dev`.
 - `terraform-apply.yml`: executa `apply` manual via `workflow_dispatch`, protegido pelo GitHub Environment `dev`.
-- O arquivo versionado em `environments/dev.tfvars` e a base operacional atual do projeto. Os arquivos `qa` e `prod` podem ser ativados futuramente quando a promocao entre ambientes entrar no escopo.
+- O arquivo versionado em `environments/dev.tfvars` e a unica configuracao operacional do laboratorio.
 
 Secrets e variables esperados no GitHub:
 - Environment variables: `AWS_REGION`, `AWS_ROLE_TO_ASSUME`, `TF_BACKEND_BUCKET`, `TF_BACKEND_REGION`, `TF_BACKEND_ROLE_ARN` no Environment `dev`.
 - Environment variables opcionais: `TOGGLEMASTER_GITOPS_REPO_URL`, `TOGGLEMASTER_GITOPS_BRANCH`, `TOGGLEMASTER_ADDONS_REPO_URL`, `TOGGLEMASTER_ADDONS_BRANCH`.
-- Environment secrets: `TF_VAR_DB_PASSWORD`, `TF_VAR_SERVICE_API_KEY`, `TF_VAR_MASTER_KEY`.
+- `DB_PASSWORD` continua sendo o unico secret do bootstrap do Terraform, exportado no pipeline como `TF_VAR_db_password` quando a base de dados ainda precisa ser criada.
+- `SERVICE_API_KEY` e `MASTER_KEY` nao sao obrigatorios para o Terraform; eles sao gerados pelo pipeline `togglemaster-secrets-generator` e publicados no AWS Secrets Manager com os nomes `togglemaster-dev/app/service-api-key` e `togglemaster-dev/app/master-key`.
+- O repositório GitOps sincroniza esses valores para os workloads via `ExternalSecret` e os expõe nas variaveis dos containers (`SERVICE_API_KEY` e `MASTER_KEY`).
 - Nao configure `TF_VAR_AWS_ACCESS_KEY_ID` ou `TF_VAR_AWS_SECRET_ACCESS_KEY`: o fluxo usa
 	OIDC/IRSA e essas credenciais legadas nao sao consumidas.
 
@@ -63,20 +65,23 @@ O apply do IaC instala o ArgoCD apenas para entregar o controle ao GitOps. Depoi
 ArgoCD estiver saudável, mudanças de addons e aplicações devem ocorrer nos repositórios
 GitOps correspondentes, não por `kubectl apply` manual.
 
-## Configuração dos GitHub Environments
+## Configuração do GitHub Environment
 
-Configure `dev`, `qa` e `prod` separadamente. Em cada environment, defina:
+Configure somente o Environment `dev`:
 
 - Variables: `AWS_REGION`, `AWS_ROLE_TO_ASSUME`, `TF_BACKEND_BUCKET`,
 	`TF_BACKEND_REGION` e opcionalmente `TF_BACKEND_ROLE_ARN`.
 - Variables opcionais: URLs e branches de `togglemaster-gitops` e
 	`togglemaster-addons`.
-- Secrets: `TF_VAR_DB_PASSWORD`, `TF_VAR_SERVICE_API_KEY` e `TF_VAR_MASTER_KEY`.
+- Secrets gerados pelo pipeline `togglemaster-secrets-generator`: `DB_PASSWORD`, `SERVICE_API_KEY` e `MASTER_KEY` no Secrets Manager, com sincronização pelo `ExternalSecret` do repositório GitOps.
 
 Remova secrets antigos `TF_VAR_AWS_ACCESS_KEY_ID` e `TF_VAR_AWS_SECRET_ACCESS_KEY`; eles não
-são mais consumidos pelo Terraform. Em `prod`, configure reviewers obrigatórios e impeça
-deploy a partir de branches que não sejam a branch protegida do ambiente.
+são mais consumidos pelo Terraform. Configure reviewers no Environment `dev` quando o
+laboratorio exigir aprovacao manual.
 
 O trust policy das roles deve casar com o claim OIDC do workflow e com o `environment:` do
 job. Alterar o nome do environment ou o repositório exige atualizar também o stack
 `togglemaster-bootstrap-ci-iam`.
+
+
+teste
