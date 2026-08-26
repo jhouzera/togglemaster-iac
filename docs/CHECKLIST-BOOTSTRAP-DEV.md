@@ -14,8 +14,7 @@
 - Remover secrets legados `TF_VAR_AWS_ACCESS_KEY_ID` e `TF_VAR_AWS_SECRET_ACCESS_KEY`; eles
 	nao fazem parte do contrato atual.
 - Definir opcionalmente no Environment `dev` as variables `TOGGLEMASTER_GITOPS_REPO_URL`, `TOGGLEMASTER_GITOPS_BRANCH`, `TOGGLEMASTER_ADDONS_REPO_URL` e `TOGGLEMASTER_ADDONS_BRANCH`.
-- Definir no `togglemaster-apps` as variables `AWS_ROLE_TO_ASSUME_DEV`,
-	definir `SONAR_TOKEN` somente se usado.
+- Definir no `togglemaster-apps` a variable `AWS_ROLE_TO_ASSUME_DEV` e, se usado, `SONAR_TOKEN`.
 - Criar manualmente `argocd/git-creds` no cluster para o write-back do Image Updater.
 
 ## 3. Revisão do IaC
