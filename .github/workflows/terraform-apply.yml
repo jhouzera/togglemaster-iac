@@ -5,6 +5,12 @@ on:
     branches:
       - develop
   workflow_dispatch:
+    inputs:
+      infra_destroy:
+        description: 'Destruir a infraestrutura? (true para destruir)'
+        type: boolean
+        required: false
+        default: false
 
 permissions:
   contents: read
@@ -59,7 +65,12 @@ jobs:
         run: terraform validate
 
       - name: Terraform plan
-        run: terraform plan -var-file="environments/${TARGET_ENV}.tfvars" -out=tfplan
+        run: |
+          if [[ "${{ github.event.inputs.infra_destroy }}" == "true" ]]; then
+            terraform plan -destroy -var-file="environments/${TARGET_ENV}.tfvars" -out=tfplan
+          else
+            terraform plan -var-file="environments/${TARGET_ENV}.tfvars" -out=tfplan
+          fi
 
       - name: Terraform apply com plano salvo
         run: terraform apply -auto-approve tfplan
