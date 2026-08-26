@@ -29,7 +29,6 @@ jobs:
       TF_VAR_togglemaster_addons_branch: ${{ vars.TOGGLEMASTER_ADDONS_BRANCH }}
       TF_BACKEND_BUCKET: ${{ vars.TF_BACKEND_BUCKET }}
       TF_BACKEND_REGION: ${{ vars.TF_BACKEND_REGION }}
-      TF_BACKEND_ROLE_ARN: ${{ vars.TF_BACKEND_ROLE_ARN }}
 
     steps:
       - name: Checkout
