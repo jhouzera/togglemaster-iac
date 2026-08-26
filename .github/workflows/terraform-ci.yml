@@ -1,7 +1,10 @@
 name: terraform-iac
 
 on:
-  workflow_call:
+  push:
+    branches:
+      - develop
+  pull_request:
 
 permissions:
   contents: read
