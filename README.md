@@ -25,7 +25,7 @@ Fluxo operacional:
 Pipeline por ambiente:
 - `terraform-plan.yml`: executa `fmt`, `init`, `validate` e `plan` para o ambiente `dev`.
 - `terraform-apply.yml`: executa `apply` manual via `workflow_dispatch`, protegido pelo GitHub Environment `dev`.
-- O arquivo versionado em `environments/dev.tfvars` e a base operacional atual do projeto. Os arquivos `qa` e `prod` podem ser ativados futuramente quando a promocao entre ambientes entrar no escopo.
+- O arquivo versionado em `environments/dev.tfvars` e a unica configuracao operacional do laboratorio.
 
 Secrets e variables esperados no GitHub:
 - Environment variables: `AWS_REGION`, `AWS_ROLE_TO_ASSUME`, `TF_BACKEND_BUCKET`, `TF_BACKEND_REGION`, `TF_BACKEND_ROLE_ARN` no Environment `dev`.
@@ -65,9 +65,9 @@ O apply do IaC instala o ArgoCD apenas para entregar o controle ao GitOps. Depoi
 ArgoCD estiver saudável, mudanças de addons e aplicações devem ocorrer nos repositórios
 GitOps correspondentes, não por `kubectl apply` manual.
 
-## Configuração dos GitHub Environments
+## Configuração do GitHub Environment
 
-Configure `dev`, `qa` e `prod` separadamente. Em cada environment, defina:
+Configure somente o Environment `dev`:
 
 - Variables: `AWS_REGION`, `AWS_ROLE_TO_ASSUME`, `TF_BACKEND_BUCKET`,
 	`TF_BACKEND_REGION` e opcionalmente `TF_BACKEND_ROLE_ARN`.
@@ -76,8 +76,8 @@ Configure `dev`, `qa` e `prod` separadamente. Em cada environment, defina:
 - Secrets gerados pelo pipeline `togglemaster-secrets-generator`: `DB_PASSWORD`, `SERVICE_API_KEY` e `MASTER_KEY` no Secrets Manager, com sincronização pelo `ExternalSecret` do repositório GitOps.
 
 Remova secrets antigos `TF_VAR_AWS_ACCESS_KEY_ID` e `TF_VAR_AWS_SECRET_ACCESS_KEY`; eles não
-são mais consumidos pelo Terraform. Em `prod`, configure reviewers obrigatórios e impeça
-deploy a partir de branches que não sejam a branch protegida do ambiente.
+são mais consumidos pelo Terraform. Configure reviewers no Environment `dev` quando o
+laboratorio exigir aprovacao manual.
 
 O trust policy das roles deve casar com o claim OIDC do workflow e com o `environment:` do
 job. Alterar o nome do environment ou o repositório exige atualizar também o stack

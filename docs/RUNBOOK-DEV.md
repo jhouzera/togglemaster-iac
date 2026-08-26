@@ -13,18 +13,25 @@ Este runbook descreve a ordem operacional para provisionar a infraestrutura, ins
 - AWS CLI autenticado com permissões adequadas.
 - Ferramentas instaladas: `terraform`, `kubectl`, `helm`, `git`.
 - Repositórios clonados localmente.
-- GitHub Environments e secrets configurados.
+- Acesso de administrador ou mantenedor aos repositorios GitHub envolvidos.
 
 ## Governança antes do primeiro deploy
 
-1. Confirme que `togglemaster-bootstrap-ci-iam` já criou o bucket de state e a role OIDC
-	específica do ambiente.
-2. Configure protection rules no GitHub Environment `dev`; para `qa` e `prod`, exija
-	aprovação de revisores e mantenha as branches protegidas.
-3. Confirme que o workflow usa OIDC e que não existem secrets de access key configurados.
-4. Confirme que `TF_BACKEND_BUCKET` aponta para o bucket correto e que cada ambiente usa
-	uma key distinta.
-5. Confirme que o repositório GitOps e o repositório de addons estão acessíveis e possuem
+1. Confirme que `togglemaster-bootstrap-ci-iam` já criou o bucket de state e as roles OIDC
+	do ambiente `dev`.
+2. Em `togglemaster-iac > Settings > Environments`, crie o environment `dev`.
+3. No environment `dev`, cadastre as variables `AWS_REGION=us-east-1`, `AWS_ROLE_TO_ASSUME`
+	com o ARN da role IaC, `TF_BACKEND_BUCKET`, `TF_BACKEND_REGION=us-east-1` e
+	`TF_BACKEND_ROLE_ARN`.
+4. Cadastre os secrets `TF_VAR_DB_PASSWORD`, `TF_VAR_SERVICE_API_KEY` e `TF_VAR_MASTER_KEY`
+	no environment `dev` somente quando forem exigidos pelo Terraform.
+5. Em `Settings > Actions > General`, permita as actions usadas e os workflows reutilizaveis
+	do repositorio `togglemaster-cicd-templates`.
+6. Em `Settings > Branches`, proteja a branch usada pelo laboratorio e exija os checks
+	`Terraform Validate` e `Terraform Security Scan` antes do merge.
+7. Confirme que o workflow usa OIDC e que nao existem secrets de access key configurados.
+8. Confirme que `TF_BACKEND_BUCKET` aponta para o bucket correto e usa a key do laboratorio.
+9. Confirme que o repositorio GitOps e o repositorio de addons estao acessiveis e possuem
 	a estrutura esperada (`bootstrap/` e ApplicationSets).
 
 Nunca execute apply concorrente para o mesmo ambiente. O workflow possui concorrência por
@@ -73,8 +80,8 @@ Observação:
 - se a `LabRole` for mandatória no laboratório, preencha `lab_role_arn` antes do apply.
 - o workflow de apply gera e aplica o plano no mesmo job protegido; ele não reutiliza
 	automaticamente o artefato do plan de um Pull Request anterior;
-- antes de um apply de produção, compare o plan do commit aprovado com a mudança que será
-	executada e confirme a aprovação do GitHub Environment.
+- antes de um apply, compare o plan do commit aprovado com a mudança que será executada e
+	confirme a aprovação do GitHub Environment `dev`, quando configurada.
 
 Se o apply falhar depois de criar parte dos recursos, não rode `destroy` como primeira ação.
 Leia o erro, verifique o state remoto e reexecute o mesmo workflow após corrigir a causa.
@@ -149,14 +156,11 @@ Fluxo esperado:
 6. Confirmar atualização do arquivo `charts/togglemaster/apps/*-values.yaml` no repositório `togglemaster-gitops`.
 7. Confirmar sincronização automática do ArgoCD.
 
-## Etapa 8. Promoção entre ambientes
+## Etapa 8. Validação contínua do laboratorio
 
-1. Promova a alteração do código de aplicação para `develop` e valide `dev`.
-2. Promova a mesma versão imutável da imagem para `qa`; não use `latest` como referência de
-	 release.
-3. Após os checks e aprovação, promova para `main`/`prod` e aguarde a proteção do environment.
-4. Confirme no GitOps o commit e o digest da imagem desejados antes da sincronização.
-5. Registre no Pull Request o resultado do deploy e os dashboards/alertas verificados.
+1. Execute os checks no Pull Request da branch protegida.
+2. Após o merge, confirme a publicação da imagem `togglemaster-dev` e a sincronização do ArgoCD.
+3. Registre no Pull Request o resultado do plan, da imagem e os dashboards/alertas verificados.
 
 ## Rollback
 
@@ -202,9 +206,10 @@ Se a role OIDC falhar:
 
 ## Ações manuais e evidências
 
-As ações manuais previstas são: criar/configurar os GitHub Environments, proteger branches,
-aprovar `qa`/`prod`, executar o bootstrap inicial do backend, preencher secrets no GitHub,
-confirmar conectividade AWS/Kubernetes e aprovar operações destrutivas ou de rollback.
+As ações manuais previstas são: executar o bootstrap inicial do backend, criar/configurar o
+GitHub Environment `dev`, cadastrar variables e secrets, proteger a branch do laboratorio,
+configurar required status checks, confirmar conectividade AWS/Kubernetes e aprovar operações
+destrutivas ou de rollback.
 
 Para cada deploy, retenha o SHA do commit, ambiente, resultado do plan, aprovação, run URL,
 versão/digest da imagem e evidências de saúde do cluster. Não anexe secrets, state ou
