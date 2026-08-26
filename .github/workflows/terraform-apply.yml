@@ -1,10 +1,7 @@
 name: terraform-apply
 
 on:
-  push:
-    branches:
-      - develop
-  pull_request:
+  
   workflow_dispatch:
 
 permissions:
