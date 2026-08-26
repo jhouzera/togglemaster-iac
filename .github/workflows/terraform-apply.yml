@@ -1,9 +1,6 @@
 name: terraform-apply
 
 on:
-  push:
-    branches:
-      - develop
   workflow_dispatch:
 
 permissions:
@@ -15,11 +12,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  validate-and-security:
-    uses: ./.github/workflows/terraform-ci.yml
-
   apply:
-    needs: validate-and-security
     name: Terraform Apply (dev)
     runs-on: ubuntu-latest
     environment: dev
@@ -60,7 +53,8 @@ jobs:
       - name: Terraform init
         run: terraform init -backend-config=backend.hcl
 
-
+      - name: Terraform validate
+        run: terraform validate
 
       - name: Terraform plan
         run: terraform plan -var-file="environments/${TARGET_ENV}.tfvars" -out=tfplan
