@@ -1,0 +1,29 @@
+name: Auto PR to Develop
+
+on:
+  push:
+    branches:
+      - 'feat/*'
+      - 'bug/*'
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  create-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create Pull Request to develop
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_EXISTS=$(gh pr list --head "${{ github.ref_name }}" --base "develop" --json number -q 'length')
+          if [ "$PR_EXISTS" -eq "0" ]; then
+            gh pr create --base develop --head "${{ github.ref_name }}" \
+              --title "Auto PR: Merge ${{ github.ref_name }} into develop" \
+              --body "Automated PR created by GitHub Actions"
+          else
+            echo "PR already exists"
+          fi
