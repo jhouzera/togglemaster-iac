@@ -1,10 +1,7 @@
 terraform {
   required_version = ">= 1.5.0"
 
-  backend "s3" {
-    use_lockfile = true
-    encrypt      = true
-  }
+
 
   required_providers {
     aws = {
