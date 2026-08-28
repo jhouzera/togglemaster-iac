@@ -9,7 +9,6 @@ remote_state {
     key          = "togglemaster/${path_relative_to_include()}/terraform.tfstate"
     region       = get_env("TF_BACKEND_REGION", "")
     encrypt      = true
-    use_lockfile = true
 
     # Evita que o Terragrunt tente alterar as policies/encryption do bucket de estado
     skip_bucket_ssencryption = true
