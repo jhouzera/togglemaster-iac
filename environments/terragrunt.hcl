@@ -10,5 +10,11 @@ remote_state {
     region       = get_env("TF_BACKEND_REGION", "")
     encrypt      = true
     use_lockfile = true
+
+    # Evita que o Terragrunt tente alterar as policies/encryption do bucket de estado
+    skip_bucket_ssencryption = true
+    skip_bucket_root_access  = true
+    skip_bucket_enforced_tls = true
+    disable_bucket_update    = true
   }
 }
