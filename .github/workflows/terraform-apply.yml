@@ -25,6 +25,9 @@ jobs:
     name: Terraform Apply (dev)
     runs-on: ubuntu-latest
     environment: dev
+    defaults:
+      run:
+        working-directory: environments/${{ env.TARGET_ENV }}
     env:
       TARGET_ENV: dev
       TF_VAR_db_password: ${{ secrets.TF_VAR_DB_PASSWORD }}
@@ -46,31 +49,28 @@ jobs:
         with:
           terraform_version: 1.9.8
 
+      - name: Setup Terragrunt
+        run: |
+          curl -sL https://github.com/gruntwork-io/terragrunt/releases/download/v0.67.1/terragrunt_linux_amd64 -o /tmp/terragrunt
+          chmod +x /tmp/terragrunt
+          sudo mv /tmp/terragrunt /usr/local/bin/terragrunt
+
       - name: Configurar credenciais AWS via OIDC
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ vars.AWS_ROLE_TO_ASSUME }}
           aws-region: ${{ vars.AWS_REGION }}
 
-      - name: Exportar variaveis sensiveis para Terraform
-        run: bash .github/scripts/export-tfvars-env.sh
+      - name: Exportar variaveis sensiveis
+        run: bash ../../.github/scripts/export-tfvars-env.sh
 
-      - name: Renderizar backend config
-        run: bash .github/scripts/render-backend-config.sh backend.hcl "${TARGET_ENV}"
-
-      - name: Terraform init
-        run: terraform init -backend-config=backend.hcl
-
-      - name: Terraform validate
-        run: terraform validate
-
-      - name: Terraform plan
+      - name: Terragrunt plan
         run: |
           if [[ "${{ github.event.inputs.infra_destroy }}" == "true" ]]; then
-            terraform plan -destroy -var-file="environments/${TARGET_ENV}.tfvars" -out=tfplan
+            terragrunt plan -destroy -out=tfplan
           else
-            terraform plan -var-file="environments/${TARGET_ENV}.tfvars" -out=tfplan
+            terragrunt plan -out=tfplan
           fi
 
-      - name: Terraform apply com plano salvo
-        run: terraform apply -auto-approve tfplan
+      - name: Terragrunt apply com plano salvo
+        run: terragrunt apply -auto-approve tfplan
