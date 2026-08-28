@@ -128,13 +128,12 @@ jobs:
         with:
           name: terraform-plan-dev
           path: |
-            tfplan
-            tfplan.txt
-            backend.hcl
+            environments/${{ env.TARGET_ENV }}/tfplan
+            environments/${{ env.TARGET_ENV }}/tfplan.txt
 
       - name: Comentar resumo do plan no PR
         if: github.event_name == 'pull_request'
         uses: marocchino/sticky-pull-request-comment@v2
         with:
           header: terraform-plan-dev
-          path: tfplan.txt
+          path: environments/${{ env.TARGET_ENV }}/tfplan.txt
