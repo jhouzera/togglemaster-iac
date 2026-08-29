@@ -75,7 +75,3 @@ jobs:
       - name: Terragrunt apply com plano salvo
         run: terragrunt apply -auto-approve tfplan
 
-  auto-pr-to-main:
-    uses: jhouzera/togglemaster-cicd-templates/.github/workflows/auto-pr.yml@35dbcf4f6cf5c0805934d3cc172a042b92577bab
-    with:
-      target-branch: main
