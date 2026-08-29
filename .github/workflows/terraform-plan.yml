@@ -68,7 +68,7 @@ jobs:
       - name: TFLint run
         run: tflint --recursive --minimum-failure-severity=error
 
-  plan:
+  terraform-plan:
     needs: [terraform-validate, terraform-security]
     name: Terraform Plan (dev)
     runs-on: ubuntu-latest
