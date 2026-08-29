@@ -21,7 +21,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  validate:
+  terraform-validate:
     name: Terraform Validate
     runs-on: ubuntu-latest
     defaults:
@@ -41,10 +41,10 @@ jobs:
       - name: Terraform validate
         run: terraform validate
 
-  security:
+  terraform-security:
     name: Terraform Security Scan
     runs-on: ubuntu-latest
-    needs: validate
+    needs: terraform-validate
     defaults:
       run:
         working-directory: infrastructure
@@ -68,8 +68,8 @@ jobs:
       - name: TFLint run
         run: tflint --recursive --minimum-failure-severity=error
 
-  plan:
-    needs: [validate, security]
+  terraform-plan:
+    needs: [terraform-validate, terraform-security]
     name: Terraform Plan (dev)
     runs-on: ubuntu-latest
     environment: dev
