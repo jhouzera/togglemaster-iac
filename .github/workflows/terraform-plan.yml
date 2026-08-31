@@ -72,7 +72,6 @@ jobs:
     needs: [terraform-validate, terraform-security]
     name: Terraform Plan (dev)
     runs-on: ubuntu-latest
-    environment: dev
     defaults:
       run:
         working-directory: environments/${{ env.TARGET_ENV }}
