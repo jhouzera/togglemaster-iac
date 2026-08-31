@@ -82,6 +82,3 @@ laboratorio exigir aprovacao manual.
 O trust policy das roles deve casar com o claim OIDC do workflow e com o `environment:` do
 job. Alterar o nome do environment ou o repositório exige atualizar também o stack
 `togglemaster-bootstrap-ci-iam`.
-
-
-teste
