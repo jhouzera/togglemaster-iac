@@ -21,8 +21,3 @@ output "evaluation_irsa_role_arn" {
 output "eso_irsa_role_arn" {
   value = aws_iam_role.eso_irsa.arn
 }
-
-output "argocd_image_updater_irsa_role_arn" {
-  description = "IAM Role ARN for ArgoCD Image Updater via IRSA"
-  value       = aws_iam_role.argocd_image_updater_irsa.arn
-}
