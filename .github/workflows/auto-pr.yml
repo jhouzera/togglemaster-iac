@@ -14,4 +14,4 @@ jobs:
   auto-pr:
     uses: jhouzera/togglemaster-cicd-templates/.github/workflows/auto-pr.yml@main
     with:
-      target-branch: develop
+      target-branch: main
