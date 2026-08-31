@@ -6,7 +6,6 @@ locals {
   oidc_provider_sub_analytics         = "system:serviceaccount:${var.analytics_namespace}:${var.analytics_service_account_name}"
   oidc_provider_sub_evaluation        = "system:serviceaccount:${var.evaluation_namespace}:${var.evaluation_service_account_name}"
   oidc_provider_sub_eso               = "system:serviceaccount:${var.eso_namespace}:${var.eso_service_account_name}"
-  oidc_provider_sub_image_updater     = "system:serviceaccount:${var.argocd_image_updater_namespace}:${var.argocd_image_updater_service_account_name}"
   oidc_provider_issuer_without_scheme = replace(var.oidc_provider_url, "https://", "")
 }
 
@@ -310,60 +309,3 @@ resource "aws_iam_role_policy_attachment" "eso_secretsmanager_read" {
   policy_arn = aws_iam_policy.eso_secretsmanager_read.arn
 }
 
-resource "aws_iam_role" "argocd_image_updater_irsa" {
-  name = "${local.name_prefix}-argocd-image-updater-irsa"
-
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Effect = "Allow"
-        Principal = {
-          Federated = var.oidc_provider_arn
-        }
-        Action = "sts:AssumeRoleWithWebIdentity"
-        Condition = {
-          StringEquals = {
-            "${local.oidc_provider_issuer_without_scheme}:sub" = local.oidc_provider_sub_image_updater
-            "${local.oidc_provider_issuer_without_scheme}:aud" = "sts.amazonaws.com"
-          }
-        }
-      }
-    ]
-  })
-}
-
-resource "aws_iam_policy" "argocd_image_updater_ecr_read" {
-  name        = "${local.name_prefix}-argocd-image-updater-ecr-read"
-  description = "Permite ao ArgoCD Image Updater descobrir tags de imagens no ECR"
-
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Effect = "Allow"
-        Action = [
-          "ecr:GetAuthorizationToken"
-        ]
-        Resource = "*"
-      },
-      {
-        Effect = "Allow"
-        Action = [
-          "ecr:BatchCheckLayerAvailability",
-          "ecr:BatchGetImage",
-          "ecr:DescribeImages",
-          "ecr:DescribeRepositories",
-          "ecr:GetDownloadUrlForLayer",
-          "ecr:ListImages"
-        ]
-        Resource = local.ecr_repository_arn
-      }
-    ]
-  })
-}
-
-resource "aws_iam_role_policy_attachment" "argocd_image_updater_ecr_read" {
-  role       = aws_iam_role.argocd_image_updater_irsa.name
-  policy_arn = aws_iam_policy.argocd_image_updater_ecr_read.arn
-}

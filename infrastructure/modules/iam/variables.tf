@@ -74,16 +74,6 @@ variable "eso_service_account_name" {
   type = string
 }
 
-variable "argocd_image_updater_namespace" {
-  type    = string
-  default = "argocd"
-}
-
-variable "argocd_image_updater_service_account_name" {
-  type    = string
-  default = "argocd-image-updater"
-}
-
 variable "ecr_repository_prefix" {
   type    = string
   default = "togglemaster-dev"

@@ -74,3 +74,4 @@ jobs:
 
       - name: Terragrunt apply com plano salvo
         run: terragrunt apply -auto-approve tfplan
+

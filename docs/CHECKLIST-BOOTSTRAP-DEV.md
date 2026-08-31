@@ -15,7 +15,7 @@
 	nao fazem parte do contrato atual.
 - Definir opcionalmente no Environment `dev` as variables `TOGGLEMASTER_GITOPS_REPO_URL`, `TOGGLEMASTER_GITOPS_BRANCH`, `TOGGLEMASTER_ADDONS_REPO_URL` e `TOGGLEMASTER_ADDONS_BRANCH`.
 - Definir no `togglemaster-apps` a variable `AWS_ROLE_TO_ASSUME_DEV` e, se usado, `SONAR_TOKEN`.
-- Criar manualmente `argocd/git-creds` no cluster para o write-back do Image Updater.
+- Configurar no `togglemaster-apps` os secrets `GITOPS_TOKEN` e `GITOPS_REPO` para a criacao de Pull Requests de promocao.
 
 ## 3. Revisão do IaC
 - Revisar `environments/dev.tfvars`.
@@ -46,8 +46,8 @@
 - Confirmar `build`, `lint`, `SCA`, `SAST` e `container scan`.
 - Confirmar falha do pipeline quando o Trivy encontrar vulnerabilidade `CRITICAL`.
 - Fazer merge na `develop` para validar `dev` e confirmar push da imagem para o ECR.
-- Confirmar atualização automática do `values.yaml` correspondente no repositório `togglemaster-gitops`.
-- Confirmar sincronização automática do ArgoCD após a atualização da tag.
+- Confirmar criacao do Pull Request que atualiza o values correspondente no repositorio `togglemaster-gitops`.
+- Confirmar sincronizacao automatica do ArgoCD apos o merge da imagem por digest.
 
 ## 8. Critérios de aceite
 - Infraestrutura provisionada com sucesso no ambiente `dev`.

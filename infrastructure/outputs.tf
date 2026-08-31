@@ -97,11 +97,6 @@ output "ecr_repository_urls" {
 #   value       = module.iam.evaluation_irsa_role_arn
 # }
 #
-# output "argocd_image_updater_irsa_role_arn" {
-#   description = "IAM Role ARN for ArgoCD Image Updater via IRSA"
-#   value       = module.iam.argocd_image_updater_irsa_role_arn
-# }
-#
 # output "eso_irsa_role_arn" {
 #   description = "IAM Role ARN for External Secrets Operator via IRSA"
 #   value       = module.iam.eso_irsa_role_arn

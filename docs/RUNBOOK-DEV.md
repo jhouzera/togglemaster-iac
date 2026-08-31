@@ -151,7 +151,6 @@ Fluxo esperado:
 1. Abrir Pull Request alterando um único microsserviço.
 2. Validar o workflow correspondente.
 3. Confirmar execução de build, lint, Trivy, gosec ou bandit e scan da imagem.
-4. Baixar o artifact AIOps do job `validate` para inspecionar `aiops_test_summary.md` e os logs compactados em caso de falha ou regressão.
 5. Após merge em `main`, confirmar push da imagem no ECR.
 6. Confirmar atualização do arquivo `charts/togglemaster/apps/*-values.yaml` no repositório `togglemaster-gitops`.
 7. Confirmar sincronização automática do ArgoCD.
