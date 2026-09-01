@@ -31,7 +31,7 @@ Secrets e variables esperados no GitHub:
 - Environment variables: `AWS_REGION`, `AWS_ROLE_TO_ASSUME`, `TF_BACKEND_BUCKET`, `TF_BACKEND_REGION`, `TF_BACKEND_ROLE_ARN` no Environment `dev`.
 - Environment variables opcionais: `TOGGLEMASTER_GITOPS_REPO_URL`, `TOGGLEMASTER_GITOPS_BRANCH`, `TOGGLEMASTER_ADDONS_REPO_URL`, `TOGGLEMASTER_ADDONS_BRANCH`.
 - `DB_PASSWORD` continua sendo o unico secret do bootstrap do Terraform, exportado no pipeline como `TF_VAR_db_password` quando a base de dados ainda precisa ser criada.
-- `SERVICE_API_KEY` e `MASTER_KEY` nao sao obrigatorios para o Terraform; eles sao gerados pelo pipeline `togglemaster-secrets-generator` e publicados no AWS Secrets Manager com os nomes `togglemaster-dev/app/service-api-key` e `togglemaster-dev/app/master-key`.
+- `SERVICE_API_KEY` e `MASTER_KEY` nao sao obrigatorios para o Terraform; eles sao gerados pelo pipeline `togglemaster-secrets-generator` e publicados no AWS Secrets Manager com os nomes `togglemaster-dev/evaluation/service-api-key` e `togglemaster-dev/auth/master-key`.
 - O repositório GitOps sincroniza esses valores para os workloads via `ExternalSecret` e os expõe nas variaveis dos containers (`SERVICE_API_KEY` e `MASTER_KEY`).
 - Nao configure `TF_VAR_AWS_ACCESS_KEY_ID` ou `TF_VAR_AWS_SECRET_ACCESS_KEY`: o fluxo usa
 	OIDC/IRSA e essas credenciais legadas nao sao consumidas.
