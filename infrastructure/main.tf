@@ -89,7 +89,8 @@ resource "null_resource" "argocd_bootstrap" {
   depends_on = [module.eks]
 
   provisioner "local-exec" {
-    command = "${path.module}/scripts/bootstrap-argocd.sh"
+    command     = abspath("${path.module}/../scripts/bootstrap-argocd.sh")
+    interpreter = ["/usr/bin/env", "bash", "-c"]
 
     environment = {
       AWS_REGION           = var.aws_region
