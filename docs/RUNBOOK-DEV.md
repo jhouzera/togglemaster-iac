@@ -23,8 +23,8 @@ Este runbook descreve a ordem operacional para provisionar a infraestrutura, ins
 3. No environment `dev`, cadastre as variables `AWS_REGION=us-east-1`, `AWS_ROLE_TO_ASSUME`
 	com o ARN da role IaC, `TF_BACKEND_BUCKET`, `TF_BACKEND_REGION=us-east-1` e
 	`TF_BACKEND_ROLE_ARN`.
-4. Cadastre os secrets `TF_VAR_DB_PASSWORD`, `TF_VAR_SERVICE_API_KEY` e `TF_VAR_MASTER_KEY`
-	no environment `dev` somente quando forem exigidos pelo Terraform.
+4. Cadastre somente o secret `TF_VAR_DB_PASSWORD` no environment `dev` quando for exigido pelo
+	Terraform. Os segredos de runtime sao criados pelo `togglemaster-secrets-generator`.
 5. Em `Settings > Actions > General`, permita as actions usadas e os workflows reutilizaveis
 	do repositorio `togglemaster-cicd-templates`.
 6. Em `Settings > Branches`, proteja a branch usada pelo laboratorio e exija os checks

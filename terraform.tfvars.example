@@ -7,9 +7,6 @@ environment  = "lab"
 # Recomendado: 16+ caracteres, com letras, numeros e simbolos.
 db_password = "ChangeMe123!"
 
-# Segredos de aplicacao (opcional, recomendado definir em pipeline segura)
-service_api_key       = ""
-master_key            = ""
 aws_access_key_id     = ""
 aws_secret_access_key = ""
 

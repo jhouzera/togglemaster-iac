@@ -100,20 +100,6 @@ variable "db_password" {
   sensitive   = true
 }
 
-variable "service_api_key" {
-  description = "API key interna usada pelo evaluation-service"
-  type        = string
-  default     = ""
-  sensitive   = true
-}
-
-variable "master_key" {
-  description = "Chave mestre usada pelo auth-service"
-  type        = string
-  default     = ""
-  sensitive   = true
-}
-
 variable "keda_namespace" {
   description = "Namespace where KEDA runs"
   type        = string

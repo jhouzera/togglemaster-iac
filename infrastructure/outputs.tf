@@ -102,12 +102,3 @@ output "ecr_repository_urls" {
 #   value       = module.iam.eso_irsa_role_arn
 # }
 #
-# output "secrets_manager_secret_names" {
-#   description = "Nomes dos segredos criados no AWS Secrets Manager"
-#   value       = module.data.secrets_manager_secret_names
-# }
-#
-# output "secrets_manager_secret_arns" {
-#   description = "ARNs dos segredos criados no AWS Secrets Manager"
-#   value       = module.data.secrets_manager_arns
-# }

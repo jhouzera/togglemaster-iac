@@ -22,15 +22,3 @@ variable "db_password" {
   type      = string
   sensitive = true
 }
-
-variable "service_api_key" {
-  type      = string
-  default   = ""
-  sensitive = true
-}
-
-variable "master_key" {
-  type      = string
-  default   = ""
-  sensitive = true
-}
