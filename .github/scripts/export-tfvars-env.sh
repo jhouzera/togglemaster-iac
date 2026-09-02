@@ -16,10 +16,6 @@ for var_name in "${required_vars[@]}"; do
 done
 
 optional_vars=(
-  TF_VAR_togglemaster_gitops_repo_url
-  TF_VAR_togglemaster_gitops_branch
-  TF_VAR_togglemaster_addons_repo_url
-  TF_VAR_togglemaster_addons_branch
 )
 
 for var_name in "${optional_vars[@]}"; do

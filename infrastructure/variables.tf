@@ -195,39 +195,3 @@ variable "eso_service_account_name" {
   type        = string
   default     = "external-secrets"
 }
-
-variable "argocd_namespace" {
-  description = "Namespace do ArgoCD"
-  type        = string
-  default     = "argocd"
-}
-
-variable "argocd_chart_version" {
-  description = "Versao do chart oficial do ArgoCD"
-  type        = string
-  default     = "7.8.7"
-}
-
-variable "togglemaster_gitops_repo_url" {
-  description = "URL do repositório GitOps com os charts e ApplicationSets"
-  type        = string
-  default     = "https://github.com/jhouzera/togglemaster-gitops.git"
-}
-
-variable "togglemaster_gitops_branch" {
-  description = "Branch do repositorio GitOps"
-  type        = string
-  default     = "main"
-}
-
-variable "togglemaster_addons_repo_url" {
-  description = "URL do repositório com os addons do cluster"
-  type        = string
-  default     = "https://github.com/jhouzera/togglemaster-addons.git"
-}
-
-variable "togglemaster_addons_branch" {
-  description = "Branch do repositorio de addons"
-  type        = string
-  default     = "main"
-}
