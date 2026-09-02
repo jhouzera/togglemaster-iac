@@ -73,7 +73,7 @@ variable "eks_endpoint_private_access" {
 variable "eks_public_access_cidrs" {
   description = "CIDRs allowed to reach the public EKS Kubernetes API endpoint"
   type        = list(string)
-  default     = ["177.94.86.239/32"]
+  default     = ["0.0.0.0/0"]
 }
 
 variable "node_instance_type" {
