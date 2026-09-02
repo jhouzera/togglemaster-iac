@@ -19,7 +19,7 @@ variable "project_name" {
 variable "environment" {
   description = "Environment name"
   type        = string
-  default     = "lab"
+  default     = "dev"
 }
 
 variable "vpc_cidr" {
@@ -55,7 +55,7 @@ variable "use_nat_gateway" {
 variable "eks_cluster_version" {
   description = "EKS cluster version"
   type        = string
-  default     = "1.30"
+  default     = "1.35"
 }
 
 variable "eks_endpoint_public_access" {
@@ -194,4 +194,16 @@ variable "eso_service_account_name" {
   description = "ServiceAccount do External Secrets Operator para IRSA"
   type        = string
   default     = "external-secrets"
+}
+
+variable "togglemaster_gitops_repo_url" {
+  description = "URL do repositório GitOps"
+  type        = string
+  default     = "https://github.com/jhouzera/togglemaster-gitops.git"
+}
+
+variable "togglemaster_gitops_branch" {
+  description = "Branch do repositório GitOps"
+  type        = string
+  default     = "main"
 }
