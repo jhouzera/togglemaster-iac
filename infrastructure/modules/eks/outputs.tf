@@ -6,6 +6,11 @@ output "cluster_endpoint" {
   value = aws_eks_cluster.this.endpoint
 }
 
+output "admin_role_arn" {
+  description = "IAM role ARN with administrator access to the EKS cluster"
+  value       = aws_iam_role.admin.arn
+}
+
 output "oidc_provider_arn" {
   value = aws_iam_openid_connect_provider.this.arn
 }

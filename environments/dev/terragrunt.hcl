@@ -23,6 +23,9 @@ inputs = {
   node_min_size       = 2
   node_max_size       = 5
   lab_role_arn        = ""
+  eks_admin_trusted_principal_arns = [
+    "arn:aws:iam::927738510198:user/REPLACE_WITH_YOUR_IAM_USER",
+  ]
 
   keda_namespace            = "keda"
   keda_service_account_name = "keda-operator"

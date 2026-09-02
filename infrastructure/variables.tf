@@ -106,6 +106,12 @@ variable "lab_role_arn" {
   default     = ""
 }
 
+variable "eks_admin_trusted_principal_arns" {
+  description = "IAM user or role ARNs allowed to assume the dedicated EKS administrator role"
+  type        = list(string)
+  default     = []
+}
+
 variable "db_username" {
   description = "Master username for PostgreSQL instances"
   type        = string
