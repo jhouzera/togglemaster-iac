@@ -4,7 +4,7 @@
 Este runbook descreve a ordem operacional para provisionar a infraestrutura, instalar a camada de plataforma e publicar os microsserviços ToggleMaster no ambiente `dev`.
 
 ## Repositórios envolvidos
-- `togglemaster-iac`: provisionamento AWS e bootstrap do ArgoCD.
+- `togglemaster-iac`: provisionamento AWS e instalacao local do ArgoCD.
 - `togglemaster-addons`: values dos addons instalados pelo ArgoCD.
 - `togglemaster-gitops`: ApplicationSets, Helm Chart e values por microsserviço.
 - `togglemaster-apps`: código-fonte, Dockerfiles e pipelines DevSecOps.
@@ -101,7 +101,19 @@ export GITOPS_BRANCH=main
 bash scripts/bootstrap-argocd.sh
 ```
 
-O script exige `aws`, `kubectl` e `helm`, instala o ArgoCD e aplica a Application de bootstrap que cria os ApplicationSets de addons e microsservicos.
+O script exige `aws`, `kubectl` e `helm`, instala o ArgoCD e aplica a Application raiz:
+
+- `togglemaster-apps`: reconcilia `bootstrap/applicationsets/apps.yaml` e cria as Applications dos microsservicos.
+
+Nao aplique esse ApplicationSet manualmente por `kubectl`; o script e a fonte de verdade do bootstrap local.
+
+## Configuracao GitHub para o ArgoCD
+
+1. Em `togglemaster-gitops`, mantenha a branch `main` publicada e permita leitura ao ArgoCD. Para repositorios privados, cadastre a credencial de leitura no ArgoCD antes do bootstrap.
+2. Em `togglemaster-gitops`, proteja `main`, exija Pull Request e torne o workflow `Validate GitOps Dev` obrigatorio antes do merge.
+3. Em `togglemaster-addons`, proteja `main` e exija revisao para alteracoes nos values dos charts. A instalacao e executada localmente com `togglemaster-addons/scripts/install-addons.sh`.
+4. Em `togglemaster-apps`, configure `GITOPS_TOKEN` com `Contents: Write` e `Pull requests: Write` exclusivamente em `togglemaster-gitops`. Essa credencial e usada pelo CI para abrir Pull Requests de promocao; o ArgoCD deve ter somente leitura.
+5. Em `togglemaster-cicd-templates`, publique os workflows reutilizaveis antes de atualizar os SHAs fixados pelos callers de `togglemaster-apps`.
 
 ## Etapa 5. Validar o bootstrap do ArgoCD
 
@@ -117,11 +129,12 @@ kubectl get applicationsets -n argocd
 
 Resultados esperados:
 - ArgoCD instalado;
-- ApplicationSet de addons criado;
-- ApplicationSet de microsserviços criado.
+- Application raiz `togglemaster-apps` em estado `Synced` e `Healthy`;
+- ApplicationSet de microsserviços criado por `togglemaster-apps`.
 
 ## Etapa 6. Validar a camada de addons
-No ArgoCD ou via `kubectl`, confirme os seguintes componentes:
+Instale os addons localmente pelo procedimento centralizado no `togglemaster-addons/README.md`.
+Depois, via `kubectl`, confirme os seguintes componentes:
 
 ```bash
 kubectl get pods -n kube-system
@@ -139,7 +152,7 @@ kubectl get secretstores,clustersecretstores -A
 kubectl get externalsecrets -A
 ```
 
-## Etapa 6. Validar a camada de aplicações
+## Etapa 7. Validar a camada de aplicações
 Confirme os namespaces e workloads:
 
 ```bash
@@ -162,7 +175,7 @@ kubectl get scaledobject -n analytics
 kubectl get hpa -n evaluation
 ```
 
-## Etapa 7. Validar o pipeline de microsserviços
+## Etapa 8. Validar o pipeline de microsserviços
 Cada microsserviço possui um workflow próprio no repositório `togglemaster-apps`.
 
 Fluxo esperado:
@@ -196,9 +209,10 @@ Se o ArgoCD não subir:
 - validar execução do script `scripts/bootstrap-argocd.sh`;
 - validar acesso `aws eks update-kubeconfig`.
 
-Se os addons não sincronizarem:
-- validar o `ApplicationSet` de addons;
-- validar URLs dos charts e values no repositório `togglemaster-addons`.
+Se os addons não instalarem ou atualizarem:
+- validar o contexto `kubectl` local;
+- validar as URLs dos charts e values no repositorio `togglemaster-addons`;
+- executar novamente `togglemaster-addons/scripts/install-addons.sh`.
 
 Se os microsserviços não sincronizarem:
 - validar o `ApplicationSet` em `togglemaster-gitops/bootstrap/applicationsets/apps.yaml`;

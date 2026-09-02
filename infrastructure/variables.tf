@@ -195,3 +195,15 @@ variable "eso_service_account_name" {
   type        = string
   default     = "external-secrets"
 }
+
+variable "togglemaster_gitops_repo_url" {
+  description = "URL do repositório GitOps"
+  type        = string
+  default     = "https://github.com/jhouzera/togglemaster-gitops.git"
+}
+
+variable "togglemaster_gitops_branch" {
+  description = "Branch do repositório GitOps"
+  type        = string
+  default     = "main"
+}

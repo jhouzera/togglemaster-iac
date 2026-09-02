@@ -23,12 +23,19 @@ if ! command -v helm >/dev/null 2>&1; then
   exit 1
 fi
 
-AWS_ARGS=(--region "${AWS_REGION}")
-if [[ -n "${TF_AWS_PROFILE:-}" ]]; then
-  AWS_ARGS+=(--profile "${TF_AWS_PROFILE}")
+AWS_ARGS=()
+KUBECONFIG_ARGS=(--region "${AWS_REGION}" --name "${CLUSTER_NAME}")
+if [[ -n "${AWS_PROFILE:-}" ]]; then
+  AWS_ARGS+=(--profile "${AWS_PROFILE}")
+  KUBECONFIG_ARGS+=(--profile "${AWS_PROFILE}")
 fi
 
-aws "${AWS_ARGS[@]}" eks update-kubeconfig --name "${CLUSTER_NAME}" >/dev/null
+if [[ -n "${EKS_ADMIN_ROLE_ARN:-}" ]]; then
+  KUBECONFIG_ARGS+=(--role-arn "${EKS_ADMIN_ROLE_ARN}")
+fi
+
+aws "${AWS_ARGS[@]}" sts get-caller-identity
+aws eks update-kubeconfig "${KUBECONFIG_ARGS[@]}"
 
 kubectl create namespace "${ARGOCD_NAMESPACE}" --dry-run=client -o yaml | kubectl apply -f -
 
@@ -44,14 +51,14 @@ helm upgrade --install argocd argo/argo-cd \
   --timeout 10m
 
 kubectl rollout status deployment/argocd-server -n "${ARGOCD_NAMESPACE}" --timeout=10m
-kubectl rollout status deployment/argocd-application-controller -n "${ARGOCD_NAMESPACE}" --timeout=10m
+kubectl rollout status statefulset/argocd-application-controller -n "${ARGOCD_NAMESPACE}" --timeout=10m
 kubectl rollout status deployment/argocd-applicationset-controller -n "${ARGOCD_NAMESPACE}" --timeout=10m || true
 
 cat <<EOF | kubectl apply -f -
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: togglemaster-bootstrap
+  name: togglemaster-apps
   namespace: ${ARGOCD_NAMESPACE}
 spec:
   project: default
@@ -71,4 +78,19 @@ spec:
       - ApplyOutOfSyncOnly=true
 EOF
 
-echo "ArgoCD instalado e bootstrap aplicado com sucesso."
+kubectl delete application togglemaster-bootstrap \
+  --namespace "${ARGOCD_NAMESPACE}" \
+  --cascade=orphan \
+  --ignore-not-found
+
+kubectl delete application togglemaster-addons \
+  --namespace "${ARGOCD_NAMESPACE}" \
+  --ignore-not-found \
+  --wait=true
+
+kubectl delete applicationset togglemaster-addons \
+  --namespace "${ARGOCD_NAMESPACE}" \
+  --ignore-not-found \
+  --wait=true
+
+echo "ArgoCD instalado e Application togglemaster-apps aplicada com sucesso."

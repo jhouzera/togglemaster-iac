@@ -36,9 +36,8 @@
 - Confirmar que o `ClusterSecretStore` e os `ExternalSecrets` podem ser reconciliados posteriormente.
 
 ## 6. Validação do GitOps
-- Confirmar que o `ApplicationSet` de addons foi criado no ArgoCD.
 - Confirmar que o `ApplicationSet` de microsserviços foi criado no ArgoCD.
-- Verificar sincronização de `metrics-server`, `keda`, `nginx-gateway`, `external-secrets` e `reloader`.
+- Instalar `metrics-server`, `keda`, `nginx-gateway`, `external-secrets` e `reloader` pelo script local de `togglemaster-addons`.
 - Verificar sincronização dos Applications `togglemaster-auth`, `togglemaster-flag`, `togglemaster-targeting`, `togglemaster-evaluation`, `togglemaster-analytics` e `togglemaster-edge`.
 
 ## 7. Validação do CI/CD
@@ -51,7 +50,7 @@
 
 ## 8. Critérios de aceite
 - Infraestrutura provisionada com sucesso no ambiente `dev`.
-- ArgoCD instalado e sincronizando addons e aplicações.
+- ArgoCD instalado e sincronizando aplicacoes; addons instalados pelo script local.
 - Segredos de runtime consumidos via AWS Secrets Manager e External Secrets Operator.
 - Um pipeline independente por microsserviço funcionando na `main` e em Pull Requests.
 - Imagens publicadas no ECR com tag semver `vMAJOR.MINOR.PATCH`.
