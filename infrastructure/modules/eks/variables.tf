@@ -30,7 +30,7 @@ variable "endpoint_private_access" {
 
 variable "public_access_cidrs" {
   type    = list(string)
-  default = ["0.0.0.0/0"]
+  default = ["177.94.86.239/32"]
 }
 
 variable "node_instance_type" {
