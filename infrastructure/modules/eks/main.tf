@@ -157,24 +157,24 @@ resource "aws_eks_access_policy_association" "admin" {
   depends_on = [aws_eks_access_entry.admin]
 }
 
-resource "aws_eks_access_entry" "lab_role" {
-  count = var.lab_role_arn != "" ? 1 : 0
+resource "aws_eks_access_entry" "cluster_admins" {
+  for_each = toset(var.cluster_admin_arns)
 
   cluster_name  = aws_eks_cluster.this.name
-  principal_arn = var.lab_role_arn
+  principal_arn = each.value
   type          = "STANDARD"
 }
 
-resource "aws_eks_access_policy_association" "lab_role_admin" {
-  count = var.lab_role_arn != "" ? 1 : 0
+resource "aws_eks_access_policy_association" "cluster_admins_policy" {
+  for_each = toset(var.cluster_admin_arns)
 
   cluster_name  = aws_eks_cluster.this.name
-  principal_arn = var.lab_role_arn
+  principal_arn = each.value
   policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
 
   access_scope {
     type = "cluster"
   }
 
-  depends_on = [aws_eks_access_entry.lab_role]
+  depends_on = [aws_eks_access_entry.cluster_admins]
 }

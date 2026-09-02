@@ -100,10 +100,10 @@ variable "node_max_size" {
   default     = 2
 }
 
-variable "lab_role_arn" {
-  description = "ARN da LabRole a ser associada ao cluster EKS com permissao administrativa"
-  type        = string
-  default     = ""
+variable "cluster_admin_arns" {
+  description = "List of IAM ARNs that should be granted Cluster Admin access via EKS Access Entries (e.g., GitHub Actions role)"
+  type        = list(string)
+  default     = []
 }
 
 variable "eks_admin_trusted_principal_arns" {

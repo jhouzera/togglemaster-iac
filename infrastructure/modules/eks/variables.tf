@@ -45,13 +45,14 @@ variable "node_min_size" {
   type = number
 }
 
-variable "node_max_size" {
-  type = number
+variable "cluster_admin_arns" {
+  description = "List of IAM ARNs that should be granted Cluster Admin access via EKS Access Entries (e.g., GitHub Actions role)"
+  type        = list(string)
+  default     = []
 }
 
-variable "lab_role_arn" {
-  type    = string
-  default = ""
+variable "node_max_size" {
+  type = number
 }
 
 variable "eks_admin_trusted_principal_arns" {
