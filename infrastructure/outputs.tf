@@ -77,6 +77,12 @@ output "ecr_repository_urls" {
 #   value       = module.iam.keda_irsa_role_arn
 # }
 #
+# Role administrativa dedicada para acesso autenticado ao cluster EKS.
+output "eks_admin_role_arn" {
+  description = "IAM role ARN to assume before running kubectl against EKS"
+  value       = module.eks.admin_role_arn
+}
+
 # output "nginx_irsa_role_arn" {
 #   description = "IAM Role ARN for ingress-nginx via IRSA"
 #   value       = module.iam.nginx_irsa_role_arn

@@ -53,3 +53,9 @@ variable "lab_role_arn" {
   type    = string
   default = ""
 }
+
+variable "eks_admin_trusted_principal_arns" {
+  description = "IAM user or role ARNs allowed to assume the dedicated EKS administrator role"
+  type        = list(string)
+  default     = []
+}
