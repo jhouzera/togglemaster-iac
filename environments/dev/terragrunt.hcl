@@ -15,6 +15,9 @@ inputs = {
   use_nat_gateway = true
 
   eks_cluster_version = "1.36"
+  eks_endpoint_public_access  = true
+  eks_endpoint_private_access = true
+  eks_public_access_cidrs     = ["0.0.0.0/0"]
   node_instance_type  = "t3.medium"
   node_desired_size   = 2
   node_min_size       = 2

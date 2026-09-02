@@ -77,6 +77,7 @@ terraform apply -var-file="environments/dev.tfvars"
 
 Observação:
 - o bootstrap do ArgoCD depende de `aws`, `kubectl` e `helm` instalados no host de execução;
+- o endpoint da API EKS possui acesso publico para permitir o bootstrap por GitHub Actions e o uso local de `kubectl`. Restrinja `eks_public_access_cidrs` quando houver runner auto-hospedado ou IPs de origem estaveis;
 - se a `LabRole` for mandatória no laboratório, preencha `lab_role_arn` antes do apply.
 - o workflow de apply gera e aplica o plano no mesmo job protegido; ele não reutiliza
 	automaticamente o artefato do plan de um Pull Request anterior;
