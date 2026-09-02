@@ -38,8 +38,6 @@ module "data" {
   private_subnet_ids = module.vpc.private_subnet_ids
   db_username        = var.db_username
   db_password        = var.db_password
-  service_api_key    = var.service_api_key
-  master_key         = var.master_key
 }
 
 module "ecr" {
@@ -58,7 +56,6 @@ module "iam" {
   oidc_provider_url               = module.eks.oidc_provider_url
   sqs_queue_arn                   = module.data.sqs_queue_arn
   dynamodb_table_arn              = module.data.dynamodb_table_arn
-  secrets_manager_arns            = module.data.secrets_manager_arns
   keda_namespace                  = var.keda_namespace
   keda_service_account_name       = var.keda_service_account_name
   nginx_namespace                 = var.nginx_namespace

@@ -22,10 +22,6 @@ variable "dynamodb_table_arn" {
   type = string
 }
 
-variable "secrets_manager_arns" {
-  type = list(string)
-}
-
 variable "keda_namespace" {
   type = string
 }

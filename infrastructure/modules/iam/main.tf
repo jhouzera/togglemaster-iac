@@ -13,7 +13,8 @@ data "aws_caller_identity" "current" {}
 data "aws_partition" "current" {}
 
 locals {
-  ecr_repository_arn = "arn:${data.aws_partition.current.partition}:ecr:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:repository/${var.ecr_repository_prefix}/*"
+  ecr_repository_arn  = "arn:${data.aws_partition.current.partition}:ecr:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:repository/${var.ecr_repository_prefix}/*"
+  secrets_manager_arn = "arn:${data.aws_partition.current.partition}:secretsmanager:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:secret:${local.name_prefix}/*"
 }
 
 data "aws_region" "current" {}
@@ -298,7 +299,7 @@ resource "aws_iam_policy" "eso_secretsmanager_read" {
           "secretsmanager:DescribeSecret",
           "secretsmanager:ListSecretVersionIds"
         ]
-        Resource = var.secrets_manager_arns
+        Resource = local.secrets_manager_arn
       }
     ]
   })

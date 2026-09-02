@@ -10,7 +10,7 @@
 - Criar o Environment `dev` no repositório `togglemaster-iac`.
 - Definir no Environment `dev` as variables `AWS_REGION`, `AWS_ROLE_TO_ASSUME`, `TF_BACKEND_BUCKET`, `TF_BACKEND_REGION` e `TF_BACKEND_ROLE_ARN`.
 - Definir no Environment `dev` o secret `TF_VAR_DB_PASSWORD` para o bootstrap inicial do banco, quando necessário.
-- Os segredos `SERVICE_API_KEY` e `MASTER_KEY` devem ser gerados pelo workflow `togglemaster-secrets-generator` e publicados no AWS Secrets Manager com os nomes `togglemaster-dev/evaluation/service-api-key` e `togglemaster-dev/auth/master-key`.
+- Os endpoints e segredos de runtime devem ser criados pelo workflow `togglemaster-secrets-generator`; consulte o catalogo no README desse repositorio.
 - Remover secrets legados `TF_VAR_AWS_ACCESS_KEY_ID` e `TF_VAR_AWS_SECRET_ACCESS_KEY`; eles
 	nao fazem parte do contrato atual.
 - Definir opcionalmente no Environment `dev` as variables `TOGGLEMASTER_GITOPS_REPO_URL`, `TOGGLEMASTER_GITOPS_BRANCH`, `TOGGLEMASTER_ADDONS_REPO_URL` e `TOGGLEMASTER_ADDONS_BRANCH`.

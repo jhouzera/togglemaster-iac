@@ -29,13 +29,3 @@ output "dynamodb_table_name" {
 output "dynamodb_table_arn" {
   value = aws_dynamodb_table.analytics.arn
 }
-
-output "secrets_manager_secret_names" {
-  value = {
-    app_config = aws_secretsmanager_secret.app.name
-  }
-}
-
-output "secrets_manager_arns" {
-  value = [aws_secretsmanager_secret.app.arn]
-}
