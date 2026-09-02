@@ -75,13 +75,13 @@ module "iam" {
   ecr_repository_prefix           = "${var.project_name}-${var.environment}"
 }
 
-# module "argocd" {
-#   source = "./modules/argocd"
+module "argocd" {
+  source = "./modules/argocd"
 
-#   project_name    = var.project_name
-#   environment     = var.environment
-#   gitops_repo_url = var.togglemaster_gitops_repo_url
-#   gitops_branch   = var.togglemaster_gitops_branch
+  project_name    = var.project_name
+  environment     = var.environment
+  gitops_repo_url = var.togglemaster_gitops_repo_url
+  gitops_branch   = var.togglemaster_gitops_branch
 
-#   depends_on = [module.eks]
-# }
+  depends_on = [module.eks]
+}
