@@ -19,7 +19,7 @@ variable "project_name" {
 variable "environment" {
   description = "Environment name"
   type        = string
-  default     = "lab"
+  default     = "dev"
 }
 
 variable "vpc_cidr" {
@@ -37,13 +37,13 @@ variable "availability_zones" {
 variable "public_subnet_cidrs" {
   description = "Public subnet CIDRs"
   type        = list(string)
-  default     = ["10.20.1.0/24", "10.20.2.0/24"]
+  default     = ["10.20.1.0/24", "10.20.2.0/24", "10.20.3.0/24"]
 }
 
 variable "private_subnet_cidrs" {
   description = "Private subnet CIDRs"
   type        = list(string)
-  default     = ["10.20.11.0/24", "10.20.12.0/24"]
+  default     = ["10.20.11.0/24", "10.20.12.0/24", "10.20.13.0/24"]
 }
 
 variable "use_nat_gateway" {
