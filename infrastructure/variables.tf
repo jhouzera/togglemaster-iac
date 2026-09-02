@@ -58,6 +58,24 @@ variable "eks_cluster_version" {
   default     = "1.30"
 }
 
+variable "eks_endpoint_public_access" {
+  description = "Enable public access to the EKS Kubernetes API endpoint"
+  type        = bool
+  default     = true
+}
+
+variable "eks_endpoint_private_access" {
+  description = "Enable private access to the EKS Kubernetes API endpoint"
+  type        = bool
+  default     = true
+}
+
+variable "eks_public_access_cidrs" {
+  description = "CIDRs allowed to reach the public EKS Kubernetes API endpoint"
+  type        = list(string)
+  default     = ["177.94.86.239/32"]
+}
+
 variable "node_instance_type" {
   description = "EKS node instance type"
   type        = string

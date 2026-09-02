@@ -17,16 +17,19 @@ module "vpc" {
 module "eks" {
   source = "./modules/eks"
 
-  project_name       = var.project_name
-  environment        = var.environment
-  cluster_version    = var.eks_cluster_version
-  subnet_ids         = module.vpc.private_subnet_ids
-  vpc_id             = module.vpc.vpc_id
-  node_instance_type = var.node_instance_type
-  node_desired_size  = var.node_desired_size
-  node_min_size      = var.node_min_size
-  node_max_size      = var.node_max_size
-  lab_role_arn       = var.lab_role_arn
+  project_name            = var.project_name
+  environment             = var.environment
+  cluster_version         = var.eks_cluster_version
+  subnet_ids              = module.vpc.private_subnet_ids
+  vpc_id                  = module.vpc.vpc_id
+  endpoint_public_access  = var.eks_endpoint_public_access
+  endpoint_private_access = var.eks_endpoint_private_access
+  public_access_cidrs     = var.eks_public_access_cidrs
+  node_instance_type      = var.node_instance_type
+  node_desired_size       = var.node_desired_size
+  node_min_size           = var.node_min_size
+  node_max_size           = var.node_max_size
+  lab_role_arn            = var.lab_role_arn
 }
 
 module "data" {
