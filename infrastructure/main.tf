@@ -29,7 +29,7 @@ module "eks" {
   node_desired_size                = var.node_desired_size
   node_min_size                    = var.node_min_size
   node_max_size                    = var.node_max_size
-  lab_role_arn                     = var.lab_role_arn
+  cluster_admin_arns               = var.cluster_admin_arns
   eks_admin_trusted_principal_arns = var.eks_admin_trusted_principal_arns
 }
 

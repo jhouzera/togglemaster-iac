@@ -22,7 +22,9 @@ inputs = {
   node_desired_size   = 2
   node_min_size       = 2
   node_max_size       = 5
-  lab_role_arn        = ""
+  cluster_admin_arns  = [
+    # "COLOQUE_AQUI_O_ARN_DA_ROLE_OIDC_DO_GITHUB_ACTIONS"
+  ]
   eks_admin_trusted_principal_arns = [
     "arn:aws:iam::927738510198:user/rudtux",
   ]
