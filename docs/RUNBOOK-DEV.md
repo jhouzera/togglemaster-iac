@@ -75,7 +75,7 @@ terraform apply -var-file="environments/dev.tfvars"
 ```
 
 Observação:
-- o endpoint da API EKS permite acesso publico somente a `177.94.86.239/32`. Execute o bootstrap e comandos `kubectl` a partir desse IP, de uma VPN/NAT com esse egress ou de um runner auto-hospedado permitido; GitHub-hosted runners nao possuem IP de saida fixo e nao conseguirao acessar o endpoint;
+- o endpoint da API EKS permite acesso publico somente a `0.0.0.0/0`. Execute o bootstrap e comandos `kubectl` a partir desse IP, de uma VPN/NAT com esse egress ou de um runner auto-hospedado permitido; GitHub-hosted runners nao possuem IP de saida fixo e nao conseguirao acessar o endpoint;
 - se a `LabRole` for mandatória no laboratório, preencha `lab_role_arn` antes do apply.
 - o workflow de apply gera e aplica o plano no mesmo job protegido; ele não reutiliza
 	automaticamente o artefato do plan de um Pull Request anterior;
