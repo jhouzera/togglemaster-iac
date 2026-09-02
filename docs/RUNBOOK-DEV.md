@@ -63,8 +63,7 @@ Valide especialmente:
 - criação dos 3 RDS, Redis, DynamoDB e SQS;
 - criação dos 5 repositórios ECR;
 - criação dos segredos no AWS Secrets Manager;
-- criação das roles IRSA;
-- bootstrap do ArgoCD.
+- criação das roles IRSA.
 
 ## Etapa 3. Executar o apply
 Dispare o workflow `terraform-apply` no GitHub ou rode localmente quando apropriado:
@@ -76,7 +75,6 @@ terraform apply -var-file="environments/dev.tfvars"
 ```
 
 Observação:
-- o bootstrap do ArgoCD depende de `aws`, `kubectl` e `helm` instalados no host de execução;
 - o endpoint da API EKS permite acesso publico somente a `177.94.86.239/32`. Execute o bootstrap e comandos `kubectl` a partir desse IP, de uma VPN/NAT com esse egress ou de um runner auto-hospedado permitido; GitHub-hosted runners nao possuem IP de saida fixo e nao conseguirao acessar o endpoint;
 - se a `LabRole` for mandatória no laboratório, preencha `lab_role_arn` antes do apply.
 - o workflow de apply gera e aplica o plano no mesmo job protegido; ele não reutiliza
@@ -87,8 +85,27 @@ Observação:
 Se o apply falhar depois de criar parte dos recursos, não rode `destroy` como primeira ação.
 Leia o erro, verifique o state remoto e reexecute o mesmo workflow após corrigir a causa.
 
-## Etapa 4. Validar o bootstrap do ArgoCD
-Após o apply:
+## Etapa 4. Instalar o ArgoCD localmente
+
+Com o kubeconfig já configurado para a role administrativa do EKS, execute na raiz de `togglemaster-iac`:
+
+```bash
+export AWS_PROFILE=<seu-profile>
+export AWS_REGION=us-east-1
+export CLUSTER_NAME=togglemaster-dev-eks
+export ARGOCD_NAMESPACE=argocd
+export ARGOCD_CHART_VERSION=7.8.7
+export GITOPS_REPO_URL=https://github.com/jhouzera/togglemaster-gitops.git
+export GITOPS_BRANCH=main
+
+bash scripts/bootstrap-argocd.sh
+```
+
+O script exige `aws`, `kubectl` e `helm`, instala o ArgoCD e aplica a Application de bootstrap que cria os ApplicationSets de addons e microsservicos.
+
+## Etapa 5. Validar o bootstrap do ArgoCD
+
+Após a instalação local:
 
 ```bash
 kubectl get nodes
@@ -103,7 +120,7 @@ Resultados esperados:
 - ApplicationSet de addons criado;
 - ApplicationSet de microsserviços criado.
 
-## Etapa 5. Validar a camada de addons
+## Etapa 6. Validar a camada de addons
 No ArgoCD ou via `kubectl`, confirme os seguintes componentes:
 
 ```bash

@@ -74,34 +74,3 @@ module "iam" {
   eso_service_account_name        = var.eso_service_account_name
   ecr_repository_prefix           = "${var.project_name}-${var.environment}"
 }
-
-resource "null_resource" "argocd_bootstrap" {
-  triggers = {
-    cluster_name         = module.eks.cluster_name
-    cluster_endpoint     = module.eks.cluster_endpoint
-    gitops_repo_url      = var.togglemaster_gitops_repo_url
-    gitops_branch        = var.togglemaster_gitops_branch
-    addons_repo_url      = var.togglemaster_addons_repo_url
-    addons_branch        = var.togglemaster_addons_branch
-    argocd_namespace     = var.argocd_namespace
-    argocd_chart_version = var.argocd_chart_version
-  }
-
-  depends_on = [module.eks]
-
-  provisioner "local-exec" {
-    command = "bash ${abspath("${path.module}/scripts/bootstrap-argocd.sh")}"
-
-    environment = {
-      AWS_REGION           = var.aws_region
-      TF_AWS_PROFILE       = var.aws_profile
-      CLUSTER_NAME         = module.eks.cluster_name
-      ARGOCD_NAMESPACE     = var.argocd_namespace
-      ARGOCD_CHART_VERSION = var.argocd_chart_version
-      GITOPS_REPO_URL      = var.togglemaster_gitops_repo_url
-      GITOPS_BRANCH        = var.togglemaster_gitops_branch
-      ADDONS_REPO_URL      = var.togglemaster_addons_repo_url
-      ADDONS_BRANCH        = var.togglemaster_addons_branch
-    }
-  }
-}
