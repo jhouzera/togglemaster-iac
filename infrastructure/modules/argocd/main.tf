@@ -10,6 +10,8 @@ resource "helm_release" "argocd" {
   values = [
     <<-EOT
     server:
+      extraArgs:
+        - --insecure
       additionalApplications:
         - name: bootstrap
           namespace: argocd
