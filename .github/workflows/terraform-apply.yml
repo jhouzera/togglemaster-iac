@@ -10,7 +10,7 @@ on:
         description: 'Destruir a infraestrutura? (true para destruir)'
         type: boolean
         required: false
-        default: false
+        default: true
 
 permissions:
   contents: read
