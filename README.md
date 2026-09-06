@@ -1,84 +1,33 @@
 # togglemaster-iac
 
-Repositorio dedicado a infraestrutura AWS da plataforma ToggleMaster.
+Repositório dedicado à automação da infraestrutura AWS (IaC) da plataforma ToggleMaster utilizando **Terraform**.
 
-Responsabilidades:
-- Terraform para VPC, EKS, Node Groups, RDS, Redis, DynamoDB, SQS e Secrets Manager.
-- IAM com IRSA para workloads e operadores.
-- Bootstrap do ArgoCD quando necessário.
+## 🎯 Propósito
+Provisionar toda a infraestrutura base na AWS necessária para rodar os microsserviços e os componentes de plataforma. 
+Isso inclui a rede (VPC), o cluster Kubernetes (EKS), bancos de dados estruturados (RDS PostgreSQL) e não estruturados (DynamoDB), cache (ElastiCache Redis) e mensageria (SQS). 
+Além disso, provisiona recursos do IAM OIDC (IRSA) garantindo a segurança seguindo o princípio do menor privilégio.
 
-Estrutura:
-- `main.tf`, `providers.tf`, `variables.tf` e `outputs.tf` na raiz.
-- `modules/` com os componentes reutilizaveis de VPC, EKS, dados, IAM e ECR.
-- `scripts/bootstrap-argocd.sh` para instalar o ArgoCD apos o provisionamento do cluster.
-- `.github/workflows/terraform-ci.yml` para validacao e scan de seguranca do IaC.
-- `docs/CHECKLIST-BOOTSTRAP-DEV.md` com o checklist de execucao do ambiente `dev`.
-- `docs/CHECKLIST-DEV.md` com o checklist de integracao GitHub no ambiente `dev`.
-- `docs/RUNBOOK-DEV.md` com o procedimento operacional ponta a ponta.
+## 🚀 Como Utilizar
 
-Fluxo operacional:
-- Use `terraform.tfvars.example` como base para variaveis do ambiente.
-- Nao versione `terraform.tfvars` com credenciais ou segredos reais.
-- Execute `terraform init -backend=false && terraform validate` para validacao local rapida.
-- O bootstrap do ArgoCD exige `aws`, `kubectl` e `helm` no host de execucao do Terraform.
+A infraestrutura é dividida por módulos lógicos e é provisionada utilizando Terraform. A autenticação com a AWS é feita via perfil do AWS CLI (ex: OIDC/SSO).
 
-Pipeline por ambiente:
-- `terraform-plan.yml`: executa `fmt`, `init`, `validate` e `plan` para o ambiente `dev`.
-- `terraform-apply.yml`: executa `apply` manual via `workflow_dispatch`, protegido pelo GitHub Environment `dev`.
-- O arquivo versionado em `environments/dev.tfvars` e a unica configuracao operacional do laboratorio.
+### Requisitos
+- Terraform >= 1.5.0
+- AWS CLI autenticado
+- Credenciais ou AWS Profile configurado
 
-Secrets e variables esperados no GitHub:
-- Environment variables: `AWS_REGION`, `AWS_ROLE_TO_ASSUME`, `TF_BACKEND_BUCKET`, `TF_BACKEND_REGION`, `TF_BACKEND_ROLE_ARN` no Environment `dev`.
-- Environment variables opcionais: `TOGGLEMASTER_GITOPS_REPO_URL`, `TOGGLEMASTER_GITOPS_BRANCH`, `TOGGLEMASTER_ADDONS_REPO_URL`, `TOGGLEMASTER_ADDONS_BRANCH`.
-- `DB_PASSWORD` continua sendo o unico secret do bootstrap do Terraform, exportado no pipeline como `TF_VAR_db_password` quando a base de dados ainda precisa ser criada.
-- Os endpoints e segredos de runtime nao sao inputs do Terraform. Eles sao criados pelo `togglemaster-secrets-generator` como secrets individuais e sincronizados via `ExternalSecret`.
-- Nao configure `TF_VAR_AWS_ACCESS_KEY_ID` ou `TF_VAR_AWS_SECRET_ACCESS_KEY`: o fluxo usa
-	OIDC/IRSA e essas credenciais legadas nao sao consumidas.
+### Exemplo Simples de Deploy
 
-Escopo de seguranca:
-- Secrets de runtime devem ser gerenciados pelo AWS Secrets Manager e pelo repositório
-	`togglemaster-secrets-generator` quando aplicável.
-- Workloads e operadores devem autenticar na AWS via IRSA. O IaC não cria mais um secret
-	de credenciais AWS legadas.
-
-Este repositorio nao deve conter codigo dos microsservicos nem manifests de aplicacao.
-
-## Contrato entre repositorios
-
-```text
-togglemaster-bootstrap-ci-iam
-	-> bucket S3 do state + roles OIDC do GitHub
-togglemaster-iac
-	-> VPC, EKS, dados, ECR, IAM/IRSA e bootstrap inicial do ArgoCD
-togglemaster-addons
-	-> addons de plataforma reconciliados pelo ArgoCD
-togglemaster-gitops
-	-> ApplicationSets, charts e valores das aplicações
-togglemaster-apps
-	-> imagens versionadas no ECR e atualização dos valores GitOps
-togglemaster-secrets-generator
-	-> secrets de runtime no AWS Secrets Manager
+```bash
+cd infrastructure/environments/dev
+# Inicializa os plugins do terraform
+terraform init
+# Valida e planeja a criação
+terraform plan -out=tfplan
+# Aplica a infraestrutura na nuvem
+terraform apply tfplan
 ```
 
-O apply do IaC instala o ArgoCD apenas para entregar o controle ao GitOps. Depois que o
-ArgoCD estiver saudável, mudanças de addons e aplicações devem ocorrer nos repositórios
-GitOps correspondentes, não por `kubectl apply` manual.
-
-## Configuração do GitHub Environment
-
-Configure somente o Environment `dev`:
-
-- Variables: `AWS_REGION`, `AWS_ROLE_TO_ASSUME`, `TF_BACKEND_BUCKET`,
-	`TF_BACKEND_REGION` e opcionalmente `TF_BACKEND_ROLE_ARN`.
-- Variables opcionais: URLs e branches de `togglemaster-gitops` e
-	`togglemaster-addons`.
-- Endpoints e segredos de runtime gerados pelo `togglemaster-secrets-generator` no Secrets Manager, com sincronização pelo `ExternalSecret` do repositorio GitOps.
-
-Remova secrets antigos `TF_VAR_AWS_ACCESS_KEY_ID` e `TF_VAR_AWS_SECRET_ACCESS_KEY`; eles não
-são mais consumidos pelo Terraform. Configure reviewers no Environment `dev` quando o
-laboratorio exigir aprovacao manual.
-
-O trust policy das roles deve casar com o claim OIDC do workflow e com o `environment:` do
-job. Alterar o nome do environment ou o repositório exige atualizar também o stack
-`togglemaster-bootstrap-ci-iam`.
-
+## 🔐 Segurança e Boas Práticas
+- **Sem chaves estáticas:** Nenhuma Access Key é gerada. Todas as permissões (tanto para Workloads no EKS quanto para CI/CD) utilizam **IAM OIDC (AssumeRoleWithWebIdentity)**.
+- Os estados do Terraform (State e Lock) são armazenados em um bucket S3 remoto privado com encriptação e bloqueios via DynamoDB (criados previamente pelo bootstrap).
