@@ -19,8 +19,8 @@ inputs = {
   eks_endpoint_private_access = true
   eks_public_access_cidrs     = ["0.0.0.0/0"]
   node_instance_type  = "t3.medium"
-  node_desired_size   = 3
-  node_min_size       = 2
+  node_desired_size   = 4
+  node_min_size       = 3
   node_max_size       = 5
   cluster_admin_arns  = [
     "arn:aws:iam::927738510198:role/togglemaster-dev-github-actions-iac-role"
